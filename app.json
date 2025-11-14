@@ -49,10 +49,17 @@
         }
       ],
       [
-        "@rnmapbox/maps",
+        "@reactvision/react-viro",
         {
-          "RNMapboxMapsImpl": "mapbox",
-          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoiZW1pZWxza2VuIiwiYSI6ImNtaHZ2cW5mMzAwaHcya3I3d2k2NzJ3eG4ifQ.rHgetfpOwQwIKNIxjHhJVA"
+          "android": {
+            "xRMode": "AR"
+          },
+          "ios": {
+            "cameraUsagePermission": "$(ArtQuestia) uses your camera for AR experiences.",
+            "microphoneUsagePermission": "$(ArtQuestia) uses your microphone for AR experiences.",
+            "photosPermission": "$(ArtQuestia) would like to read photos for AR experiences.",
+            "savephotosPermission": "$(ArtQuestia) would like to save photos to your library during AR experiences."
+          }
         }
       ]
     ],
