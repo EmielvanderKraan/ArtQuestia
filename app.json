@@ -55,15 +55,18 @@
             "xRMode": "AR"
           },
           "ios": {
-            "cameraUsagePermission": "$(ArtQuestia) uses your camera for AR experiences.",
-            "microphoneUsagePermission": "$(ArtQuestia) uses your microphone for AR experiences.",
-            "photosPermission": "$(ArtQuestia) would like to read photos for AR experiences.",
-            "savephotosPermission": "$(ArtQuestia) would like to save photos to your library during AR experiences."
+            "cameraUsagePermission": "ArtQuestia uses your camera for AR experiences.",
+            "microphoneUsagePermission": "ArtQuestia uses your microphone for AR experiences.",
+            "photosPermission": "ArtQuestia would like to read photos for AR experiences.",
+            "savephotosPermission": "ArtQuestia would like to save photos to your library during AR experiences."
           }
         }
       ],
       [
         "@maplibre/maplibre-react-native"
+      ],
+      [
+        "expo-location"
       ]
     ],
     "experiments": {
