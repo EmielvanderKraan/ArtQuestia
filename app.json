@@ -61,6 +61,9 @@
             "savephotosPermission": "$(ArtQuestia) would like to save photos to your library during AR experiences."
           }
         }
+      ],
+      [
+        "@maplibre/maplibre-react-native"
       ]
     ],
     "experiments": {
