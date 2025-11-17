@@ -31,16 +31,16 @@ function ARModelScene() {
 
       {/* 3D Model */}
       <Viro3DObject
-        source={require('../../assets/3D-Models/model.glb')} // Update with your model path
-        resources={[]} // Any additional textures/resources if needed
-        position={[0, 0, -1]} // 1 meter in front of camera
-        scale={[0.2, 0.2, 0.2]} // Adjust size
+        source={require('../../assets/3D-Models/model.glb')}
+        resources={[]}
+        position={[0, 0, -1]}
+        scale={[0.5, 0.5, 0.5]}
         type="GLB"
-        dragType="FixedToWorld" // Allows dragging
-        animation={{ name: 'rotate', run: true, loop: true }} // Auto rotate
+        dragType="FixedToWorld"
+        animation={{ name: 'rotate', run: true, loop: true }}
         onLoadStart={() => console.log('Model loading...')}
         onLoadEnd={() => console.log('Model loaded!')}
-        onError={(e) => console.log('Error loading model:', e)}
+        onError={(e) => console.error('Error loading model:', e)}
       />
     </ViroARScene>
   );
