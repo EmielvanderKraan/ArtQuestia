@@ -47,15 +47,16 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingTop: 50,
     paddingLeft: 20,
+    backgroundColor: '#000000ff',
   },
   mainTitle: {
     fontSize: 32,
     // Optional: add color or other styles
-    color: '#000',
+    color: '#fff',
   },
   subtitle: {
     fontSize: 16,
     marginTop: 8,
-    color: '#555',
+    color: '#fff',
   },
 });
