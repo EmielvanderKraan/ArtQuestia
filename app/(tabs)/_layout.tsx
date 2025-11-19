@@ -15,25 +15,42 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   const renderIcon = (icon, focused) => (
-    <View
-      style={{
-        width: focused ? 70 : 50,
-        height: focused ? 70 : 50,
-        borderRadius: focused ? 35 : 25,
-        backgroundColor: focused ? '#2B2B2B' : 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: focused ? -45 : 0,
-      }}
-    >
-      <Image
-        source={icon}
+    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+
+      {focused && (
+        <View
+          style={{
+            position: 'absolute',
+            top: -38,
+            width: 70,
+            height: 70,
+            borderRadius: 42.5,
+            backgroundColor: '#4F4F4F',
+            zIndex: -1,
+          }}
+        />
+      )}
+
+      <View
         style={{
-          width: focused ? 50 : 45,
-          height: focused ? 50 : 45,
-          resizeMode: 'contain',
+          width: focused ? 70 : 50,
+          height: focused ? 70 : 50,
+          borderRadius: focused ? 35 : 25,
+          backgroundColor: focused ? '#2B2B2B' : 'transparent',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: focused ? -35 : 0,
         }}
-      />
+      >
+        <Image
+          source={icon}
+          style={{
+            width: focused ? 50 : 45,
+            height: focused ? 50 : 45,
+            resizeMode: 'contain',
+          }}
+        />
+      </View>
     </View>
   );
 
