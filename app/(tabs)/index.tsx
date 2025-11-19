@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: '#fff',
     borderRadius: 30,
-    overflow: 'hidden', // zodat het oranje deel ook mooi afgerond blijft
+    overflow: 'hidden',
   },
 
   input: {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
 
   searchButton: {
     width: 50,
-    backgroundColor: '#FF7A00', // oranje
+    backgroundColor: '#FF7700',
     justifyContent: 'center',
     alignItems: 'center',
   },
