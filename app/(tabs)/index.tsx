@@ -283,8 +283,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 300,
     resizeMode: 'contain',
-    marginTop: 25,
-    marginBottom: -75,
+    marginTop: 10,
+    marginBottom: -78,
   },
 
   nextButton: {
