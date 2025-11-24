@@ -3,6 +3,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   Image,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -32,6 +33,7 @@ export default function SettingsScreen() {
 
   return (
     <ThemedView style={styles.titleContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
       <TouchableOpacity style={styles.bellButton}>
         <Image source={Bell} style={styles.bellIcon} />
@@ -89,6 +91,7 @@ export default function SettingsScreen() {
 
       <ArtworkCard/>
 
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -101,11 +104,12 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
+    backgroundColor: '#000',
+  },
+  scrollContent: {
     paddingTop: 70,
     paddingLeft: 20,
     paddingRight: 20,
-    backgroundColor: '#000',
-    overflowY: 'scroll',
   },
   bellButton: {
     position: 'absolute',
