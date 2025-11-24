@@ -458,7 +458,8 @@ const styles = StyleSheet.create({
   rowStickers: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    columnGap: 20,
     rowGap: 120,
     marginTop: 70,
     marginBottom: 100,
