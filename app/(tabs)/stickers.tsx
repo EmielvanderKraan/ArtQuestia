@@ -23,10 +23,6 @@ import Icon7 from '../../assets/prestaties/7.png';
 import Icon120 from '../../assets/prestaties/120.png';
 import Icon55 from '../../assets/prestaties/55.png';
 import Route from '../../assets/icons/themaRouteIcon.png';
-import deJeugd from '../../assets/stickers/deJeugd.png';
-import ballerina from '../../assets/stickers/ballerina.png';
-import cowboyHenk from '../../assets/stickers/cowboyHenk.png';
-import bazuin from '../../assets/stickers/bazuin.png';
 
 export default function SettingsScreen() {
   const [fontsLoaded] = useFonts({
@@ -35,10 +31,14 @@ export default function SettingsScreen() {
   });
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [stickerTypeDropdownVisible, setStickerTypeDropdownVisible] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("Alle");
+  const [selectedStickerType, setSelectedStickerType] = useState("Alle stickers");
   const [artworks, setArtworks] = useState<any[]>([]);
   const [themes, setThemes] = useState<string[]>(['Alle', 'Religie', 'Abstract', 'Fun', 'Gemeenschap', 'Oorlog']);
   const [loading, setLoading] = useState(true);
+
+  const stickerTypes = ['Alle stickers', 'Gevonden stickers', 'Verborgen stickers'];
 
   useEffect(() => {
     console.log('Component mounted, fetching artworks...');
@@ -88,6 +88,11 @@ export default function SettingsScreen() {
   const handleThemeSelect = (theme: string) => {
     setSelectedTheme(theme);
     setDropdownVisible(false);
+  };
+
+  const handleStickerTypeSelect = (type: string) => {
+    setSelectedStickerType(type);
+    setStickerTypeDropdownVisible(false);
   };
 
   const currentStickers = selectedTheme === 'Alle'
@@ -182,22 +187,42 @@ export default function SettingsScreen() {
       <View style={styles.buttonContainerStickers}>
         <TouchableOpacity 
           style={styles.buttonStickers1}
-          onPress={() => handleThemeSelect('Alle')}
+          onPress={() => {
+            setStickerTypeDropdownVisible(!stickerTypeDropdownVisible);
+            setDropdownVisible(false);
+          }}
         >
-          <ThemedText style={styles.buttonTextStickers}>Alle</ThemedText>
+          <ThemedText style={styles.buttonTextStickers}>{selectedStickerType}</ThemedText>
+          <ThemedText style={styles.dropdownArrow}>▼</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.buttonStickers2}
-          onPress={() => setDropdownVisible(!dropdownVisible)}
+          onPress={() => {
+            setDropdownVisible(!dropdownVisible);
+            setStickerTypeDropdownVisible(false);
+          }}
         >
           <ThemedText style={styles.buttonTextStickers}>{selectedTheme === 'Alle' ? "Thema's" : selectedTheme}</ThemedText>
           <ThemedText style={styles.dropdownArrow}>▼</ThemedText>
         </TouchableOpacity>
       </View>
 
+      {stickerTypeDropdownVisible && (
+        <View style={styles.dropdownContainerBlue}>
+          {stickerTypes.map((type, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.dropdownItem}
+              onPress={() => handleStickerTypeSelect(type)}
+            >
+              <ThemedText style={styles.dropdownText}>{type}</ThemedText>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
       {dropdownVisible && (
-        <View style={styles.dropdownContainer}>
-          <ThemedText style={{ color: '#fff', padding: 10 }}>Themes: {themes.length}</ThemedText>
+        <View style={styles.dropdownContainerOrange}>
           {themes.filter(theme => theme !== 'Alle').map((theme, index) => (
             <TouchableOpacity
               key={index}
@@ -375,9 +400,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     borderRadius: 30,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#215AFF',
+    gap: 5,
   },
   buttonStickers2: {
     flex: 1,
@@ -393,6 +420,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontFamily: 'Impact',
+  },
+  dropdownContainerBlue: {
+    backgroundColor: '#215AFF',
+    borderRadius: 14,
+    marginTop: 5,
+    overflow: 'hidden',
+  },
+  dropdownContainerOrange: {
+    backgroundColor: '#FF7700',
+    borderRadius: 14,
+    marginTop: 5,
+    overflow: 'hidden',
   },
   dropdownContainer: {
     backgroundColor: '#292929',
