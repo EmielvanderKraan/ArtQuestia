@@ -26,21 +26,27 @@ function ARModelScene() {
 
       {/* 3D Cube with baked animation from Blender */}
       <Viro3DObject
-        source={require('../../assets/3D-Models/cube.glb')}
+        source={require('../../assets/3D-Models/bomb.glb')}
         resources={[]}
         position={[0, 0, -1]}
-        scale={[0.5, 0.5, 0.5]}
+        scale={[0.1, 0.1, 0.1]}
         type="GLB"
         // This runs the animation that lives inside the GLB
         animation={{
-          name: 'CubeAction',   // <-- name of your Blender action / clip
+          name: 'BombAction',   // <-- name of your Blender action / clip
           run: true,
           loop: true,
         }}
         dragType="FixedToWorld"
-        onLoadStart={() => console.log('Cube loading...')}
-        onLoadEnd={() => console.log('Cube loaded!')}
-        onError={(e) => console.error('Error loading cube:', e)}
+        onLoadStart={() => console.log('Bomb loading...')}
+        onLoadEnd={() => console.log('Bomb loaded!')}
+        onError={(event) => {
+          console.error('Error loading bomb (message):', event.nativeEvent?.error);
+          console.error(
+            'Full error object:',
+            JSON.stringify(event.nativeEvent, null, 2),
+          );
+        }}
       />
     </ViroARScene>
   );
