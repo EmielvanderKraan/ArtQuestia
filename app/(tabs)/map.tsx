@@ -13,11 +13,15 @@ import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
+    Image,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
+
+import Search from '../../assets/icons/search.png';
 
 // Type for markers
 type Marker = {
@@ -214,7 +218,23 @@ export default function MapScreen() {
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} mapStyle={styleUrl}>
+            {/* Search bar */}
+            <View style={styles.searchContainer}>
+                <TextInput
+                    placeholder="Zoek naar kunstwerken"
+                    placeholderTextColor="#666666"
+                    style={styles.input}
+                />
+                <TouchableOpacity style={styles.searchButton}>
+                    <Image source={Search} style={styles.icon} />
+                </TouchableOpacity>
+            </View>
+
+            <MapView
+                style={styles.map}
+                mapStyle={styleUrl}
+                compassEnabled={false}
+            >
                 {/* Place your custom marker icons here
                     Example: <Images images={{ 'marker-icon': require('@/assets/icons/marker.png') }} />
                     You can add multiple icons for different marker types
@@ -297,6 +317,40 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
+    },
+    searchContainer: {
+        position: 'absolute',
+        top: 60,
+        left: 20,
+        right: 20,
+        flexDirection: 'row',
+        height: 45,
+        backgroundColor: '#fff',
+        borderRadius: 30,
+        overflow: 'hidden',
+        zIndex: 10,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    input: {
+        flex: 1,
+        paddingLeft: 15,
+        fontSize: 15,
+        color: '#000',
+        fontFamily: 'LeagueSpartan',
+    },
+    searchButton: {
+        width: 50,
+        backgroundColor: '#FF7700',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    icon: {
+        width: 18,
+        height: 18,
+        tintColor: '#fff',
     },
     locationBtn: {
         position: "absolute",
