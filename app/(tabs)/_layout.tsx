@@ -14,7 +14,7 @@ import StickersIcon from '@/assets/icons/stickerstab.png';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const renderIcon = (icon, focused, label) => (
+  const renderIcon = (icon: any, focused: boolean, label: string) => (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
       {focused && (
