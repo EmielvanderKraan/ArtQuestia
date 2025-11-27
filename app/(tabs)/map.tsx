@@ -242,9 +242,9 @@ export default function MapScreen() {
                 <Images
                     images={{
                         'marker-icon1': require('@/assets/icons/oorlogsmonument_bissegem.png'),
-                        'marker-icon2': require('@/assets/icons/oorlogsmonument_bissegem.png'),
-                        'marker-icon3': require('@/assets/icons/oorlogsmonument_bissegem.png'),
-                        'marker-icon4': require('@/assets/icons/oorlogsmonument_bissegem.png'),
+                        'marker-icon2': require('@/assets/icons/leie_monument.png'),
+                        'marker-icon3': require('@/assets/icons/groeninge_monument.png'),
+                        'marker-icon4': require('@/assets/icons/monument_voor_de_gesneuvelden_van_wereldoorlog_ii.png'),
                     }}
                 />
 
