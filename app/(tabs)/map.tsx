@@ -761,6 +761,7 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         color: "#000",
         marginBottom: 4,
+        fontFamily: "LeagueSpartan-semi-bold",
     },
     routeContentContainer: {
         flex: 1,
@@ -772,11 +773,13 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         color: "#000",
         marginBottom: 2,
+        fontFamily: "LeagueSpartan-semi-bold",
     },
     routeSubtitle: {
         fontSize: 14,
-        color: "#666",
+        color: "#000000",
         marginBottom: 8,
+        fontFamily: "LeagueSpartan-medium",
     },
     routeInfoSection: {
         marginTop: 4,
@@ -792,6 +795,7 @@ const styles = StyleSheet.create({
         color: "#000",
         flex: 1,
         textAlign: "center",
+        fontFamily: "LeagueSpartan-semibold",
     },
     routeIconsRow: {
         flexDirection: "row",
@@ -834,6 +838,7 @@ const styles = StyleSheet.create({
         color: "#000",
         flex: 1,
         textAlign: "center",
+        fontFamily: "LeagueSpartan-medium",
     },
     routeInfoValuePlaceholder: {
         flex: 1,
