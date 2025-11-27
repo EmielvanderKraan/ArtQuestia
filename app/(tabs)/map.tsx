@@ -477,16 +477,28 @@ export default function MapScreen() {
                                 {/* Icons Row */}
                                 <View style={styles.routeIconsRow}>
                                     <View style={styles.routeIconCircle}>
-                                        <IconSymbol name="clock.fill" size={24} color="#000" />
+                                        <Image
+                                            source={require("@/assets/icons/clock.png")}
+                                            style={styles.routeIcon}
+                                            resizeMode="contain"
+                                        />
                                     </View>
                                     <View style={styles.routeIconCircle}>
-                                        <IconSymbol name="figure.walk" size={24} color="#000" />
+                                        <Image
+                                            source={require("@/assets/icons/distance.png")}
+                                            style={styles.routeIcon}
+                                            resizeMode="contain"
+                                        />
                                     </View>
                                     <TouchableOpacity
                                         style={styles.routeCancelCircle}
                                         onPress={cancelRoute}
                                     >
-                                        <IconSymbol name="xmark" size={24} color="#fff" />
+                                        <Image
+                                            source={require("@/assets/icons/cancel.png")}
+                                            style={styles.routeCancelIcon}
+                                            resizeMode="contain"
+                                        />
                                     </TouchableOpacity>
                                 </View>
 
@@ -710,6 +722,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#F10906",
         justifyContent: "center",
         alignItems: "center",
+    },
+    routeIcon: {
+        width: 32,
+        height: 32,
+    },
+    routeCancelIcon: {
+        width: 28,
+        height: 28,
     },
     routeValuesRow: {
         flexDirection: "row",
