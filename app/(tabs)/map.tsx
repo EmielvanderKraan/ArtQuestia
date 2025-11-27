@@ -13,15 +13,13 @@ import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
-    Image,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 
-import Search from '../../assets/icons/search.png';
 
 // Type for markers
 type Marker = {
@@ -40,25 +38,25 @@ export default function MapScreen() {
         {
             id: "oorlogsmonument_bissegem",
             coordinate: [3.227223, 50.823085],
-            title: "",
+            title: "Oorlogsmonument Bissegem",
             icon: "marker-icon1",
         },
         {
             id: "leie_monument",
             coordinate: [3.268430, 50.835340],
-            title: "",
+            title: "Leie Monument",
             icon: "marker-icon2",
         },
         {
             id: "groeninge_monument",
             coordinate: [3.275814, 50.828708],
-            title: "",
+            title: "Groeninge Monument",
             icon: "marker-icon3",
         },
         {
             id: "monument_voor_de_gesneuvelden_van_wereldoorlog_ii",
             coordinate: [3.265759, 50.827542],
-            title: "",
+            title: "WO II Monument",
             icon: "marker-icon4",
         },
     ]);
@@ -75,9 +73,10 @@ export default function MapScreen() {
     const cameraRef = useRef<CameraRef>(null);
 
     // OpenRouteService
-    const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImNjNDUyZGVlMzNmMzQ3N2RhMTNiNTFmOWU5MGIwYjYzIiwiaCI6Im11cm11cjY0In0=";
+    const ORS_API_KEY =
+        "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImNjNDUyZGVlMzNmMzQ3N2RhMTNiNTFmOWU5MGIwYjYzIiwiaCI6Im11cm11cjY0In0=";
 
-    // Fetch route to a specific marker (ready for future implementation)
+    // Fetch route to a specific marker
     const fetchWalkingRoute = async (
         startCoord: [number, number],
         endCoord: [number, number]
@@ -111,13 +110,17 @@ export default function MapScreen() {
         }
     };
 
-    // Function to navigate to a marker (ready for future routing implementation)
+    // Navigate to a specific marker + route tekenen
     const navigateToMarker = async (marker: Marker) => {
-        if (!userCoord) return;
+        if (!userCoord) {
+            console.warn("Geen user locatie beschikbaar");
+            return;
+        }
+
         setSelectedMarker(marker);
         await fetchWalkingRoute(userCoord, marker.coordinate);
 
-        // Zoom to show both user and marker
+        // Zoom naar het kunstwerk
         cameraRef.current?.setCamera({
             centerCoordinate: marker.coordinate,
             zoomLevel: 14,
@@ -133,6 +136,7 @@ export default function MapScreen() {
                 type: "Feature",
                 id: marker.id,
                 properties: {
+                    id: marker.id, // belangrijk om het later terug te vinden
                     title: marker.title,
                     icon: marker.icon || "marker-icon",
                 },
@@ -142,6 +146,22 @@ export default function MapScreen() {
                 },
             })),
         };
+    };
+
+    // Click handler voor markers
+    const onMarkerPress = (e: any) => {
+        const feature = e.features?.[0];
+        if (!feature) return;
+
+        const markerId =
+            feature.properties?.id ?? feature.id;
+
+        if (!markerId) return;
+
+        const marker = markers.find((m) => m.id === markerId);
+        if (!marker) return;
+
+        setSelectedMarker(marker);
     };
 
     useEffect(() => {
@@ -169,11 +189,6 @@ export default function MapScreen() {
                 pitch: 60,
                 animationDuration: 1000,
             });
-
-            // You can enable this to show route to first marker on load
-            // if (markers.length > 0) {
-            //     await fetchWalkingRoute(coord, markers[0].coordinate);
-            // }
         })();
     }, []);
 
@@ -225,9 +240,6 @@ export default function MapScreen() {
                     placeholderTextColor="#666666"
                     style={styles.input}
                 />
-                <TouchableOpacity style={styles.searchButton}>
-                    <Image source={Search} style={styles.icon} />
-                </TouchableOpacity>
             </View>
 
             <MapView
@@ -235,16 +247,12 @@ export default function MapScreen() {
                 mapStyle={styleUrl}
                 compassEnabled={false}
             >
-                {/* Place your custom marker icons here
-                    Example: <Images images={{ 'marker-icon': require('@/assets/icons/marker.png') }} />
-                    You can add multiple icons for different marker types
-                */}
                 <Images
                     images={{
-                        'marker-icon1': require('@/assets/icons/oorlogsmonument_bissegem.png'),
-                        'marker-icon2': require('@/assets/icons/leie_monument.png'),
-                        'marker-icon3': require('@/assets/icons/groeninge_monument.png'),
-                        'marker-icon4': require('@/assets/icons/monument_voor_de_gesneuvelden_van_wereldoorlog_ii.png'),
+                        "marker-icon1": require("@/assets/icons/oorlogsmonument_bissegem.png"),
+                        "marker-icon2": require("@/assets/icons/leie_monument.png"),
+                        "marker-icon3": require("@/assets/icons/groeninge_monument.png"),
+                        "marker-icon4": require("@/assets/icons/monument_voor_de_gesneuvelden_van_wereldoorlog_ii.png"),
                     }}
                 />
 
@@ -256,6 +264,7 @@ export default function MapScreen() {
                     <ShapeSource
                         id="markers-source"
                         shape={getMarkersGeoJSON() as any}
+                        onPress={onMarkerPress}
                     >
                         <SymbolLayer
                             id="markers-layer"
@@ -264,14 +273,6 @@ export default function MapScreen() {
                                 iconSize: 0.05,
                                 iconAllowOverlap: true,
                                 iconIgnorePlacement: true,
-                                // For default pins if no custom icon is loaded:
-                                textField: ["get", "title"],
-                                textSize: 12,
-                                textOffset: [0, 1.5],
-                                textAnchor: "top",
-                                textColor: "#000000",
-                                textHaloColor: "#ffffff",
-                                textHaloWidth: 2,
                             }}
                         />
                     </ShapeSource>
@@ -279,7 +280,10 @@ export default function MapScreen() {
 
                 {/* wandelroute user → selected marker (volgt straten) */}
                 {routeGeoJSON && (
-                    <ShapeSource id="walking-route" shape={routeGeoJSON as any}>
+                    <ShapeSource
+                        id="walking-route"
+                        shape={routeGeoJSON as any}
+                    >
                         <LineLayer
                             id="walking-route-line"
                             style={{
@@ -302,9 +306,46 @@ export default function MapScreen() {
             </MapView>
 
             {/* Floating button: ga naar mijn locatie + route herberekenen */}
-            <TouchableOpacity style={styles.locationBtn} onPress={goToMyLocation}>
+            <TouchableOpacity
+                style={styles.locationBtn}
+                onPress={goToMyLocation}
+            >
                 <IconSymbol name="location.fill" size={28} color="white" />
             </TouchableOpacity>
+
+            {/* Popup onderaan bij geselecteerd kunstwerk */}
+            {selectedMarker && (
+                <View style={styles.popupContainer}>
+                    <View style={styles.popupCard}>
+                        <Text style={styles.popupTitle}>
+                            {selectedMarker.title || "Kunstwerk"}
+                        </Text>
+                        <Text style={styles.popupSubtitle}>
+                            {selectedMarker.id.replace(/_/g, " ")}
+                        </Text>
+
+                        <View style={styles.popupButtonsRow}>
+                            <TouchableOpacity
+                                style={styles.popupSecondaryButton}
+                                onPress={() => setSelectedMarker(null)}
+                            >
+                                <Text style={styles.popupSecondaryText}>
+                                    Sluit
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.popupPrimaryButton}
+                                onPress={() => navigateToMarker(selectedMarker)}
+                            >
+                                <Text style={styles.popupPrimaryText}>
+                                    Ontdek
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            )}
         </View>
     );
 }
@@ -319,18 +360,18 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     searchContainer: {
-        position: 'absolute',
+        position: "absolute",
         top: 60,
         left: 20,
         right: 20,
-        flexDirection: 'row',
+        flexDirection: "row",
         height: 45,
-        backgroundColor: '#fff',
+        backgroundColor: "#fff",
         borderRadius: 30,
-        overflow: 'hidden',
+        overflow: "hidden",
         zIndex: 10,
         elevation: 5,
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
@@ -338,19 +379,8 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingLeft: 15,
         fontSize: 15,
-        color: '#000',
-        fontFamily: 'LeagueSpartan',
-    },
-    searchButton: {
-        width: 50,
-        backgroundColor: '#FF7700',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    icon: {
-        width: 18,
-        height: 18,
-        tintColor: '#fff',
+        color: "#000",
+        fontFamily: "LeagueSpartan",
     },
     locationBtn: {
         position: "absolute",
@@ -363,5 +393,62 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOpacity: 0.15,
         shadowRadius: 4,
+    },
+
+    // Popup styles
+    popupContainer: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        alignItems: "center",
+        padding: 16,
+    },
+    popupCard: {
+        width: "100%",
+        maxWidth: 420,
+        backgroundColor: "#ffffff",
+        borderRadius: 24,
+        padding: 16,
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        elevation: 6,
+    },
+    popupTitle: {
+        fontSize: 18,
+        fontWeight: "700",
+        marginBottom: 4,
+        color: "#000",
+    },
+    popupSubtitle: {
+        fontSize: 14,
+        color: "#555",
+        marginBottom: 16,
+    },
+    popupButtonsRow: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        gap: 8,
+    },
+    popupPrimaryButton: {
+        backgroundColor: "#FF7700",
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+        borderRadius: 999,
+    },
+    popupPrimaryText: {
+        color: "#fff",
+        fontWeight: "600",
+    },
+    popupSecondaryButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 999,
+        backgroundColor: "#f1f1f1",
+    },
+    popupSecondaryText: {
+        color: "#333",
+        fontWeight: "500",
     },
 });
