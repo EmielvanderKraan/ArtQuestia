@@ -176,6 +176,36 @@ export default function MapScreen() {
         setSelectedMarker(null);
     };
 
+    // Find and show nearest artwork popup
+    const goToNearestArtwork = () => {
+        if (!userCoord || markers.length === 0) {
+            console.warn("Geen locatie of markers beschikbaar");
+            return;
+        }
+
+        // Find nearest marker
+        let nearestMarker = markers[0];
+        let minDistance = calculateDistance(userCoord, markers[0].coordinate);
+
+        markers.forEach((marker) => {
+            const distance = calculateDistance(userCoord, marker.coordinate);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestMarker = marker;
+            }
+        });
+
+        // Select nearest marker to show popup
+        setSelectedMarker(nearestMarker);
+
+        // Zoom to marker
+        cameraRef.current?.setCamera({
+            centerCoordinate: nearestMarker.coordinate,
+            zoomLevel: 16,
+            animationDuration: 1000,
+        });
+    };
+
     // Calculate arrival time
     const getArrivalTime = (distanceKm: number) => {
         const walkingSpeedKmH = 5; // Average walking speed
@@ -394,6 +424,24 @@ export default function MapScreen() {
                 <IconSymbol name="location.fill" size={28} color="white" />
             </TouchableOpacity>
 
+            {/* Bottom action buttons */}
+            {!isRouteActive && (
+                <View style={styles.bottomButtonsContainer}>
+                    <TouchableOpacity
+                        style={styles.nearestButton}
+                        onPress={goToNearestArtwork}
+                    >
+                        <Text style={styles.bottomButtonText}>Dichtstbijzijnde</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.followRouteButton}
+                        onPress={() => console.log("Volg een route")}
+                    >
+                        <Text style={styles.bottomButtonText}>Volg een route</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
             {/* Popup onderaan bij geselecteerd kunstwerk */}
             {selectedMarker && !isRouteActive && (
                 <Pressable
@@ -566,6 +614,46 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
 
+    // Bottom buttons
+    bottomButtonsContainer: {
+        position: "absolute",
+        left: 16,
+        right: 16,
+        bottom: 24,
+        flexDirection: "row",
+        gap: 12,
+    },
+    nearestButton: {
+        flex: 1,
+        backgroundColor: "#215AFF",
+        paddingVertical: 18,
+        borderRadius: 999,
+        alignItems: "center",
+        justifyContent: "center",
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+    },
+    followRouteButton: {
+        flex: 1,
+        backgroundColor: "#FF7700",
+        paddingVertical: 18,
+        borderRadius: 999,
+        alignItems: "center",
+        justifyContent: "center",
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+    },
+    bottomButtonText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "700",
+        fontFamily: "Impact",
+    },
+
     // Popup styles
     popupContainer: {
         position: "absolute",
@@ -614,16 +702,19 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         marginBottom: 4,
         color: "#FFFFFF",
+        fontFamily: "Impact",
     },
     popupSubtitle: {
         fontSize: 16,
         color: "#CCCCCC",
         marginBottom: 8,
+        fontFamily: "LeagueSpartan",
     },
     popupDistance: {
         fontSize: 14,
         color: "#FFFFFF",
         marginTop: 4,
+        fontFamily: "LeagueSpartan",
     },
     popupPrimaryButton: {
         backgroundColor: "#FF7700",
@@ -637,6 +728,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "700",
         fontSize: 16,
+        fontFamily: "Impact",
     },
 
     // Route navigation popup styles
