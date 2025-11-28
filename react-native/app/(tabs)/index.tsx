@@ -21,7 +21,8 @@ import Search from '../../assets/icons/search.png';
 import Icon3 from '../../assets/icons/share.png';
 import Icon2 from '../../assets/icons/stickers.png';
 
-import ArtworkCard from '@/components/ArtworkCard.tsx';
+import ArtworkCard from '@/components/ArtworkCard';
+import ArtworkCardDetail from '@/components/ArtworkCardDetail';
 
 const STRAPI_URL = 'http://172.30.40.49:1337';
 
@@ -42,6 +43,7 @@ export default function SettingsScreen() {
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [currentArtworkIndex, setCurrentArtworkIndex] = useState(0);
+  const [selectedArtwork, setSelectedArtwork] = useState<any>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -108,6 +110,11 @@ export default function SettingsScreen() {
 
   if (!fontsLoaded || loading) {
     return <ActivityIndicator size="large" style={styles.loader} />;
+  }
+
+  // Show detail view if artwork is selected
+  if (selectedArtwork) {
+    return <ArtworkCardDetail artwork={selectedArtwork} onClose={() => setSelectedArtwork(null)} />;
   }
 
   return (
@@ -233,11 +240,13 @@ export default function SettingsScreen() {
             >
               {artworksWithDistance.map((artwork, index) => (
                 <View key={artwork.id || index} style={styles.artworkCardWrapper}>
-                  <ArtworkCard 
-                    artwork={artwork} 
-                    onNext={() => handleNext(index)}
-                    index={index}
-                  />
+                  <TouchableOpacity onPress={() => setSelectedArtwork(artwork)} activeOpacity={0.95}>
+                    <ArtworkCard 
+                      artwork={artwork} 
+                      onNext={() => handleNext(index)}
+                      index={index}
+                    />
+                  </TouchableOpacity>
                 </View>
               ))}
             </ScrollView>
