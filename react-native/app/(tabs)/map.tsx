@@ -12,6 +12,7 @@ import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
+    Dimensions,
     FlatList,
     Image,
     Pressable,
@@ -62,6 +63,11 @@ type Marker = {
 export default function MapScreen() {
     // fallback: Kortrijk
     const center: [number, number] = [3.2649, 50.828];
+
+    // Get screen dimensions for responsive design
+    const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+    const isSmallDevice = screenWidth < 375;
+    const isMediumDevice = screenWidth >= 375 && screenWidth < 414;
 
     // State for artworks from database
     const [markers, setMarkers] = useState<Marker[]>([]);
@@ -365,6 +371,357 @@ export default function MapScreen() {
         });
     };
 
+    // Create responsive styles
+    const styles = StyleSheet.create({
+        container: { flex: 1 },
+        map: { flex: 1 },
+        center: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 8,
+        },
+        searchContainer: {
+            position: "absolute",
+            top: isSmallDevice ? 50 : 60,
+            left: isSmallDevice ? 16 : 20,
+            right: isSmallDevice ? 70 : 80,
+            flexDirection: "row",
+            height: isSmallDevice ? 40 : 45,
+            backgroundColor: "#fff",
+            borderRadius: 30,
+            overflow: "hidden",
+            zIndex: 10,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+        },
+        searchInput: {
+            flex: 1,
+            paddingLeft: 15,
+            fontSize: isSmallDevice ? 13 : 15,
+            color: "#000",
+            fontFamily: "LeagueSpartan-regular",
+        },
+        searchButton: {
+            width: isSmallDevice ? 45 : 50,
+            backgroundColor: "#FF7700",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        searchIcon: {
+            width: isSmallDevice ? 16 : 18,
+            height: isSmallDevice ? 16 : 18,
+            tintColor: "#fff",
+        },
+        searchResultsContainer: {
+            position: "absolute",
+            top: isSmallDevice ? 100 : 115,
+            left: isSmallDevice ? 16 : 20,
+            right: isSmallDevice ? 16 : 20,
+            maxHeight: screenHeight * 0.4,
+            backgroundColor: "#fff",
+            borderRadius: 16,
+            zIndex: 9,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+        },
+        searchResultsList: {
+            maxHeight: screenHeight * 0.4,
+        },
+        searchResultItem: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: isSmallDevice ? 12 : 16,
+            borderBottomWidth: 1,
+            borderBottomColor: "#f0f0f0",
+            width: "100%",
+        },
+        searchResultTextContainer: {
+            flex: 1,
+            marginRight: 12,
+        },
+        searchResultTitle: {
+            fontSize: isSmallDevice ? 14 : 16,
+            fontWeight: "600",
+            color: "#000",
+            marginBottom: 4,
+            fontFamily: "LeagueSpartan-regular",
+        },
+        searchResultDistance: {
+            fontSize: isSmallDevice ? 12 : 14,
+            color: "#000000",
+            fontFamily: "LeagueSpartan-regular",
+        },
+        searchResultArrow: {
+            width: isSmallDevice ? 36 : 40,
+            height: isSmallDevice ? 36 : 40,
+            borderRadius: isSmallDevice ? 18 : 20,
+            backgroundColor: "#1AF7A2",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        searchResultArrowImage: {
+            width: isSmallDevice ? 18 : 20,
+            height: isSmallDevice ? 18 : 20,
+        },
+        locationBtn: {
+            position: "absolute",
+            top: isSmallDevice ? 50 : 60,
+            right: isSmallDevice ? 16 : 24,
+            backgroundColor: "#292929",
+            padding: isSmallDevice ? 10 : 12,
+            borderRadius: 50,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOpacity: 0.15,
+            shadowRadius: 4,
+        },
+        bottomButtonsContainer: {
+            position: "absolute",
+            left: 16,
+            right: 16,
+            bottom: isSmallDevice ? 30 : 40,
+            flexDirection: "row",
+            gap: 12,
+        },
+        nearestButton: {
+            flex: 1,
+            backgroundColor: "#215AFF",
+            paddingVertical: isSmallDevice ? 14 : 18,
+            borderRadius: 999,
+            alignItems: "center",
+            justifyContent: "center",
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOpacity: 0.15,
+            shadowRadius: 4,
+        },
+        followRouteButton: {
+            flex: 1,
+            backgroundColor: "#FF7700",
+            paddingVertical: isSmallDevice ? 14 : 18,
+            borderRadius: 999,
+            alignItems: "center",
+            justifyContent: "center",
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOpacity: 0.15,
+            shadowRadius: 4,
+        },
+        bottomButtonText: {
+            color: "#FFFFFF",
+            fontSize: isSmallDevice ? 14 : 16,
+            fontWeight: "700",
+            fontFamily: "Impact",
+        },
+        popupContainer: {
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: 0,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 16,
+        },
+        popupCard: {
+            width: "100%",
+            maxWidth: 420,
+            backgroundColor: "#000000",
+            borderRadius: isSmallDevice ? 20 : 24,
+            overflow: "hidden",
+            flexDirection: "row",
+            shadowColor: "#000",
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 6,
+            height: isSmallDevice ? 160 : 180,
+        },
+        popupImageContainer: {
+            width: isSmallDevice ? 130 : 150,
+            backgroundColor: "#FF5AE5",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        popupImage: {
+            width: "80%",
+            height: "80%",
+        },
+        popupRightContent: {
+            flex: 1,
+            padding: isSmallDevice ? 12 : 16,
+            justifyContent: "space-between",
+        },
+        popupTextContainer: {
+            flex: 1,
+            justifyContent: "center",
+            marginBottom: 8,
+        },
+        popupTitle: {
+            fontSize: isSmallDevice ? 18 : 22,
+            fontWeight: "700",
+            marginBottom: 4,
+            color: "#FFFFFF",
+            fontFamily: "Impact",
+            flexWrap: "wrap",
+        },
+        popupSubtitle: {
+            fontSize: isSmallDevice ? 13 : 15,
+            color: "#FFFFFF",
+            marginBottom: 6,
+            fontFamily: "LeagueSpartan-medium",
+            flexWrap: "wrap",
+        },
+        popupDistance: {
+            fontSize: isSmallDevice ? 11 : 13,
+            color: "#FFFFFF",
+            marginTop: 2,
+            fontFamily: "LeagueSpartan-regular",
+        },
+        popupPrimaryButton: {
+            backgroundColor: "#FF7700",
+            paddingVertical: isSmallDevice ? 8 : 10,
+            paddingHorizontal: isSmallDevice ? 12 : 16,
+            borderRadius: 999,
+            alignItems: "center",
+            marginTop: 8,
+        },
+        popupPrimaryText: {
+            color: "#fff",
+            fontWeight: "700",
+            fontSize: isSmallDevice ? 14 : 16,
+            fontFamily: "Impact",
+        },
+        popupPrimaryButtonDisabled: {
+            opacity: 0.7,
+        },
+        loadingContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+        },
+        routePopupContainer: {
+            position: "absolute",
+            left: 16,
+            right: 16,
+            bottom: isSmallDevice ? 20 : 24,
+        },
+        routePopupCard: {
+            backgroundColor: "#ffffff",
+            borderRadius: isSmallDevice ? 20 : 24,
+            overflow: "hidden",
+            flexDirection: "row",
+            shadowColor: "#000",
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
+            elevation: 6,
+            minHeight: isSmallDevice ? 160 : 180,
+        },
+        routeArrowContainer: {
+            width: isSmallDevice ? 100 : 120,
+            backgroundColor: "#1AF7A2",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingVertical: 16,
+        },
+        routeDistanceText: {
+            fontSize: isSmallDevice ? 22 : 26,
+            fontWeight: "700",
+            color: "#000",
+            marginBottom: 20,
+            fontFamily: "LeagueSpartan-semi-bold",
+        },
+        routeArrowImage: {
+            width: isSmallDevice ? 70 : 90,
+            height: isSmallDevice ? 70 : 90,
+        },
+        routeContentContainer: {
+            flex: 1,
+            padding: isSmallDevice ? 12 : 16,
+            justifyContent: "space-between",
+        },
+        routeTitle: {
+            fontSize: isSmallDevice ? 17 : 20,
+            fontWeight: "700",
+            color: "#000",
+            marginBottom: 2,
+            fontFamily: "LeagueSpartan-semi-bold",
+        },
+        routeSubtitle: {
+            fontSize: isSmallDevice ? 12 : 14,
+            color: "#000000",
+            marginBottom: 8,
+            fontFamily: "LeagueSpartan-medium",
+        },
+        routeInfoSection: {
+            marginTop: 4,
+        },
+        routeLabelsRow: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginBottom: 8,
+        },
+        routeInfoLabel: {
+            fontSize: isSmallDevice ? 10 : 12,
+            fontWeight: "600",
+            color: "#000",
+            flex: 1,
+            textAlign: "center",
+            fontFamily: "LeagueSpartan-semibold",
+        },
+        routeIconsRow: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            marginBottom: 6,
+        },
+        routeIconCircle: {
+            width: isSmallDevice ? 48 : 56,
+            height: isSmallDevice ? 48 : 56,
+            borderRadius: isSmallDevice ? 24 : 28,
+            backgroundColor: "#FDE404",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        routeCancelCircle: {
+            width: isSmallDevice ? 48 : 56,
+            height: isSmallDevice ? 48 : 56,
+            borderRadius: isSmallDevice ? 24 : 28,
+            backgroundColor: "#F10906",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        routeIcon: {
+            width: isSmallDevice ? 28 : 32,
+            height: isSmallDevice ? 28 : 32,
+        },
+        routeCancelIcon: {
+            width: isSmallDevice ? 24 : 28,
+            height: isSmallDevice ? 24 : 28,
+        },
+        routeValuesRow: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 8,
+        },
+        routeInfoValue: {
+            fontSize: isSmallDevice ? 12 : 14,
+            fontWeight: "600",
+            color: "#000",
+            flex: 1,
+            textAlign: "center",
+            fontFamily: "LeagueSpartan-regular",
+        },
+        routeInfoValuePlaceholder: {
+            flex: 1,
+        },
+    });
+
     if (hasPermission === false) {
         return (
             <View style={styles.center}>
@@ -573,13 +930,13 @@ export default function MapScreen() {
                         {/* Right side: Text content + button */}
                         <View style={styles.popupRightContent}>
                             <View style={styles.popupTextContainer}>
-                                <Text style={styles.popupTitle}>
+                                <Text style={styles.popupTitle} numberOfLines={2} ellipsizeMode="tail">
                                     {selectedMarker.title || "Kunstwerk"}
                                 </Text>
-                                <Text style={styles.popupSubtitle}>
+                                <Text style={styles.popupSubtitle} numberOfLines={1} ellipsizeMode="tail">
                                     {selectedMarker.creator || "Onbekend"}
                                 </Text>
-                                <Text style={styles.popupDistance}>
+                                <Text style={styles.popupDistance} numberOfLines={1}>
                                     Afstand: {userCoord ? calculateDistance(userCoord, selectedMarker.coordinate) : "--"} km
                                 </Text>
                             </View>
@@ -691,356 +1048,3 @@ export default function MapScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1 },
-    map: { flex: 1 },
-    center: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 8,
-    },
-    searchContainer: {
-        position: "absolute",
-        top: 60,
-        left: 20,
-        right: 80,
-        flexDirection: "row",
-        height: 45,
-        backgroundColor: "#fff",
-        borderRadius: 30,
-        overflow: "hidden",
-        zIndex: 10,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    searchInput: {
-        flex: 1,
-        paddingLeft: 15,
-        fontSize: 15,
-        color: "#000",
-        fontFamily: "LeagueSpartan-regular",
-    },
-    searchButton: {
-        width: 50,
-        backgroundColor: "#FF7700",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    searchIcon: {
-        width: 18,
-        height: 18,
-        tintColor: "#fff",
-    },
-    searchResultsContainer: {
-        position: "absolute",
-        top: 115,
-        left: 20,
-        right: 20,
-        maxHeight: 300,
-        backgroundColor: "#fff",
-        borderRadius: 16,
-        zIndex: 9,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    searchResultsList: {
-        maxHeight: 300,
-    },
-    searchResultItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#f0f0f0",
-        width: "100%",
-    },
-    searchResultTextContainer: {
-        flex: 1,
-        marginRight: 12,
-    },
-    searchResultTitle: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#000",
-        marginBottom: 4,
-        fontFamily: "LeagueSpartan-regular",
-    },
-    searchResultDistance: {
-        fontSize: 14,
-        color: "#000000",
-        fontFamily: "LeagueSpartan-regular",
-    },
-    searchResultArrow: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: "#1AF7A2",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    searchResultArrowImage: {
-        width: 20,
-        height: 20,
-    },
-    locationBtn: {
-        position: "absolute",
-        top: 60,
-        right: 24,
-        backgroundColor: "#292929",
-        padding: 12,
-        borderRadius: 50,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-    },
-
-    // Bottom buttons
-    bottomButtonsContainer: {
-        position: "absolute",
-        left: 16,
-        right: 16,
-        bottom: 40,
-        flexDirection: "row",
-        gap: 12,
-    },
-    nearestButton: {
-        flex: 1,
-        backgroundColor: "#215AFF",
-        paddingVertical: 18,
-        borderRadius: 999,
-        alignItems: "center",
-        justifyContent: "center",
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-    },
-    followRouteButton: {
-        flex: 1,
-        backgroundColor: "#FF7700",
-        paddingVertical: 18,
-        borderRadius: 999,
-        alignItems: "center",
-        justifyContent: "center",
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-    },
-    bottomButtonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "700",
-        fontFamily: "Impact",
-    },
-
-    // Popup styles
-    popupContainer: {
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        top: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 16,
-    },
-    popupCard: {
-        width: "100%",
-        maxWidth: 420,
-        backgroundColor: "#000000",
-        borderRadius: 24,
-        overflow: "hidden",
-        flexDirection: "row",
-        shadowColor: "#000",
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 6,
-    },
-    popupImageContainer: {
-        width: 150,
-        height: 180,
-        backgroundColor: "#FF5AE5",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    popupImage: {
-        width: "80%",
-        height: "80%",
-    },
-    popupRightContent: {
-        flex: 1,
-        padding: 16,
-        justifyContent: "space-between",
-    },
-    popupTextContainer: {
-        flex: 1,
-        justifyContent: "center",
-    },
-    popupTitle: {
-        fontSize: 24,
-        fontWeight: "700",
-        marginBottom: 4,
-        color: "#FFFFFF",
-        fontFamily: "Impact",
-    },
-    popupSubtitle: {
-        fontSize: 16,
-        color: "#FFFFFF",
-        marginBottom: 8,
-        fontFamily: "LeagueSpartan-medium",
-    },
-    popupDistance: {
-        fontSize: 14,
-        color: "#FFFFFF",
-        marginTop: 4,
-        fontFamily: "LeagueSpartan-regular",
-    },
-    popupPrimaryButton: {
-        backgroundColor: "#FF7700",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 999,
-        alignItems: "center",
-        marginTop: 12,
-    },
-    popupPrimaryText: {
-        color: "#fff",
-        fontWeight: "700",
-        fontSize: 16,
-        fontFamily: "Impact",
-    },
-    popupPrimaryButtonDisabled: {
-        opacity: 0.7,
-    },
-    loadingContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-
-    // Route navigation popup styles
-    routePopupContainer: {
-        position: "absolute",
-        left: 16,
-        right: 16,
-        bottom: 24,
-    },
-    routePopupCard: {
-        backgroundColor: "#ffffff",
-        borderRadius: 24,
-        overflow: "hidden",
-        flexDirection: "row",
-        shadowColor: "#000",
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-        elevation: 6,
-        minHeight: 180,
-    },
-    routeArrowContainer: {
-        width: 120,
-        backgroundColor: "#1AF7A2",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingVertical: 16,
-    },
-    routeDistanceText: {
-        fontSize: 26,
-        fontWeight: "700",
-        color: "#000",
-        marginBottom: 20,
-        fontFamily: "LeagueSpartan-semi-bold",
-    },
-    routeArrowImage: {
-        width: 90,
-        height: 90,
-    },
-    routeContentContainer: {
-        flex: 1,
-        padding: 16,
-        justifyContent: "space-between",
-    },
-    routeTitle: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: "#000",
-        marginBottom: 2,
-        fontFamily: "LeagueSpartan-semi-bold",
-    },
-    routeSubtitle: {
-        fontSize: 14,
-        color: "#000000",
-        marginBottom: 8,
-        fontFamily: "LeagueSpartan-medium",
-    },
-    routeInfoSection: {
-        marginTop: 4,
-    },
-    routeLabelsRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginBottom: 8,
-    },
-    routeInfoLabel: {
-        fontSize: 12,
-        fontWeight: "600",
-        color: "#000",
-        flex: 1,
-        textAlign: "center",
-        fontFamily: "LeagueSpartan-semibold",
-    },
-    routeIconsRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        marginBottom: 6,
-    },
-    routeIconCircle: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: "#FDE404",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    routeCancelCircle: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: "#F10906",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    routeIcon: {
-        width: 32,
-        height: 32,
-    },
-    routeCancelIcon: {
-        width: 28,
-        height: 28,
-    },
-    routeValuesRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginTop: 8,
-    },
-    routeInfoValue: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#000",
-        flex: 1,
-        textAlign: "center",
-        fontFamily: "LeagueSpartan-regular",
-    },
-    routeInfoValuePlaceholder: {
-        flex: 1,
-    },
-});
