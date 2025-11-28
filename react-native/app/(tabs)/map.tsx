@@ -12,10 +12,12 @@ import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
+    FlatList,
     Image,
     Pressable,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
     View
 } from "react-native";
@@ -74,6 +76,8 @@ export default function MapScreen() {
     const [routeGeoJSON, setRouteGeoJSON] = useState<any | null>(null);
     const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
     const [isRouteActive, setIsRouteActive] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
 
     const cameraRef = useRef<CameraRef>(null);
 
@@ -226,7 +230,7 @@ export default function MapScreen() {
         cameraRef.current?.setCamera({
             centerCoordinate: nearestMarker.coordinate,
             zoomLevel: 16,
-            pitch: 0,
+            pitch: 60,
             animationDuration: 1000,
         });
     };
@@ -239,6 +243,18 @@ export default function MapScreen() {
         now.setMinutes(now.getMinutes() + durationMinutes);
         return now.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
     };
+
+    // Filter markers based on search query
+    useEffect(() => {
+        if (searchQuery.trim() === '') {
+            setFilteredMarkers([]);
+        } else {
+            const filtered = markers.filter(marker =>
+                marker.title.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredMarkers(filtered);
+        }
+    }, [searchQuery, markers]);
 
     // Fetch artworks on mount
     useEffect(() => {
@@ -330,6 +346,20 @@ export default function MapScreen() {
         } catch (error) {
             console.error('Error getting location:', error);
         }
+    };
+
+    // Handle search result click
+    const handleSearchResultClick = (marker: Marker) => {
+        setSearchQuery('');
+        setFilteredMarkers([]);
+        setSelectedMarker(marker);
+
+        cameraRef.current?.setCamera({
+            centerCoordinate: marker.coordinate,
+            zoomLevel: 16,
+            pitch: 60,
+            animationDuration: 1000,
+        });
     };
 
     if (hasPermission === false) {
@@ -425,6 +455,56 @@ export default function MapScreen() {
                     }}
                 />
             </MapView>
+
+            {/* Search bar */}
+            <View style={styles.searchContainer}>
+                <TextInput
+                    placeholder="Zoek naar kunstwerken"
+                    placeholderTextColor="#666666"
+                    style={styles.searchInput}
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+                <View style={styles.searchButton}>
+                    <Image
+                        source={require('@/assets/icons/search.png')}
+                        style={styles.searchIcon}
+                    />
+                </View>
+            </View>
+
+            {/* Search results dropdown */}
+            {filteredMarkers.length > 0 && (
+                <View style={styles.searchResultsContainer}>
+                    <FlatList
+                        data={filteredMarkers}
+                        keyExtractor={(item) => item.id}
+                        style={styles.searchResultsList}
+                        renderItem={({ item }) => {
+                            const distance = userCoord
+                                ? calculateDistance(userCoord, item.coordinate)
+                                : null;
+                            return (
+                                <TouchableOpacity
+                                    style={styles.searchResultItem}
+                                    onPress={() => handleSearchResultClick(item)}
+                                    activeOpacity={0.7}
+                                >
+                                    <View style={styles.searchResultTextContainer}>
+                                        <Text style={styles.searchResultTitle}>{item.title}</Text>
+                                        <Text style={styles.searchResultDistance}>
+                                            {distance ? `${distance.toFixed(1)} km` : 'Afstand onbekend'}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.searchResultArrow}>
+                                        <IconSymbol name="arrow.right" size={20} color="#000" />
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        }}
+                    />
+                </View>
+            )}
 
             {/* Floating button: ga naar mijn locatie + route herberekenen */}
             <TouchableOpacity
@@ -591,6 +671,88 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
+    },
+    searchContainer: {
+        position: "absolute",
+        top: 60,
+        left: 20,
+        right: 80,
+        flexDirection: "row",
+        height: 45,
+        backgroundColor: "#fff",
+        borderRadius: 30,
+        overflow: "hidden",
+        zIndex: 10,
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    searchInput: {
+        flex: 1,
+        paddingLeft: 15,
+        fontSize: 15,
+        color: "#000",
+        fontFamily: "LeagueSpartan-regular",
+    },
+    searchButton: {
+        width: 50,
+        backgroundColor: "#FF7700",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    searchIcon: {
+        width: 18,
+        height: 18,
+        tintColor: "#fff",
+    },
+    searchResultsContainer: {
+        position: "absolute",
+        top: 115,
+        left: 20,
+        right: 20,
+        maxHeight: 300,
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        zIndex: 9,
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    searchResultsList: {
+        maxHeight: 300,
+    },
+    searchResultItem: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#f0f0f0",
+        width: "100%",
+    },
+    searchResultTextContainer: {
+        flex: 1,
+        marginRight: 12,
+    },
+    searchResultTitle: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#000",
+        marginBottom: 4,
+    },
+    searchResultDistance: {
+        fontSize: 14,
+        color: "#666",
+    },
+    searchResultArrow: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "#1AF7A2",
+        justifyContent: "center",
+        alignItems: "center",
     },
     locationBtn: {
         position: "absolute",
