@@ -1,11 +1,10 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import {
     Camera,
-    Images,
     LineLayer,
     MapView,
+    MarkerView,
     ShapeSource,
-    SymbolLayer,
     UserLocation,
     type CameraRef,
 } from "@maplibre/maplibre-react-native";
@@ -21,14 +20,7 @@ import {
     View
 } from "react-native";
 
-
-// Image mapping for markers
-const markerImages: { [key: string]: any } = {
-    "marker-icon1": require("@/assets/icons/oorlogsmonument_bissegem.png"),
-    "marker-icon2": require("@/assets/icons/leie_monument.png"),
-    "marker-icon3": require("@/assets/icons/groeninge_monument.png"),
-    "marker-icon4": require("@/assets/icons/monument_voor_de_gesneuvelden_van_wereldoorlog_ii.png"),
-};
+const STRAPI_URL = 'http://172.30.40.49:1337';
 
 // Calculate distance between two coordinates using Haversine formula
 const calculateDistance = (
@@ -60,7 +52,8 @@ type Marker = {
     id: string;
     coordinate: [number, number]; // [longitude, latitude]
     title: string;
-    icon?: string; // icon name reference for custom icons
+    creator: string;
+    iconUrl: string; // URL to the hidden photo from Strapi
     description?: string; // short description for the marker
 };
 
@@ -68,37 +61,9 @@ export default function MapScreen() {
     // fallback: Kortrijk
     const center: [number, number] = [3.2649, 50.828];
 
-    // Markers array - Add your coordinates here
-    const [markers, setMarkers] = useState<Marker[]>([
-        {
-            id: "oorlogsmonument_bissegem",
-            coordinate: [3.227223, 50.823085],
-            title: "Oorlogsmonument Bissegem",
-            icon: "marker-icon1",
-            description: "Viane-Lagae",
-        },
-        {
-            id: "leie_monument",
-            coordinate: [3.268430, 50.835340],
-            title: "Leie Monument",
-            icon: "marker-icon2",
-            description: "Courtens, Alfred",
-        },
-        {
-            id: "groeninge_monument",
-            coordinate: [3.275814, 50.828708],
-            title: "Groeninge Monument",
-            icon: "marker-icon3",
-            description: "Devreese, Godfried",
-        },
-        {
-            id: "monument_voor_de_gesneuvelden_van_wereldoorlog_ii",
-            coordinate: [3.265759, 50.827542],
-            title: "WO II Monument",
-            icon: "marker-icon4",
-            description: "Geoffroy de Montpellier",
-        },
-    ]);
+    // State for artworks from database
+    const [markers, setMarkers] = useState<Marker[]>([]);
+    const [loading, setLoading] = useState(true);
 
     // Onze MapTiler style
     const maptilerKey = "mIqAbQiXcMAwOt3f0O2W";
@@ -111,6 +76,65 @@ export default function MapScreen() {
     const [isRouteActive, setIsRouteActive] = useState(false);
 
     const cameraRef = useRef<CameraRef>(null);
+
+    // Fetch artworks from Strapi
+    const fetchArtworks = async () => {
+        try {
+            const response = await fetch(`${STRAPI_URL}/api/artworks?populate=*`);
+            const data = await response.json();
+
+            if (data.error) {
+                console.error('Strapi API Error:', data.error);
+                setLoading(false);
+                return;
+            }
+
+            if (data.data) {
+                console.log('Fetched artworks:', data.data.length);
+
+                // Transform artworks into markers
+                const transformedMarkers: Marker[] = data.data
+                    .filter((artwork: any) => {
+                        const attributes = artwork.attributes || artwork;
+                        const hasLocation = attributes.Location?.lat && attributes.Location?.lng;
+                        if (!hasLocation) {
+                            console.log('Artwork missing location:', attributes.Name);
+                        }
+                        return hasLocation;
+                    })
+                    .map((artwork: any) => {
+                        const attributes = artwork.attributes || artwork;
+
+                        // Handle Photo_Hidden with multiple fallbacks like ArtworkCard
+                        const photoData = attributes.Photo_Hidden?.data;
+                        const photoUrl = photoData?.attributes?.url || photoData?.url || attributes.Photo_Hidden?.url;
+                        const fullImageUrl = photoUrl ? `${STRAPI_URL}${photoUrl}` : null;
+
+                        console.log('Artwork:', attributes.Name);
+                        console.log('Photo_Hidden structure:', JSON.stringify(attributes.Photo_Hidden, null, 2));
+                        console.log('Final Photo URL:', fullImageUrl);
+                        console.log('Location:', [attributes.Location.lng, attributes.Location.lat]);
+
+                        return {
+                            id: artwork.id.toString(),
+                            coordinate: [attributes.Location.lng, attributes.Location.lat],
+                            title: attributes.Name || 'Kunstwerk',
+                            creator: attributes.Creator || 'Onbekend',
+                            iconUrl: fullImageUrl,
+                            description: attributes.Description || '',
+                        };
+                    });
+
+                console.log('Transformed markers:', transformedMarkers.length);
+                console.log('Markers:', JSON.stringify(transformedMarkers, null, 2));
+                setMarkers(transformedMarkers);
+            }
+        } catch (error) {
+            console.error('Error fetching artworks:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // OpenRouteService
     const ORS_API_KEY =
@@ -198,10 +222,11 @@ export default function MapScreen() {
         // Select nearest marker to show popup
         setSelectedMarker(nearestMarker);
 
-        // Zoom to marker
+        // Zoom to marker with proper camera settings
         cameraRef.current?.setCamera({
             centerCoordinate: nearestMarker.coordinate,
             zoomLevel: 16,
+            pitch: 0,
             animationDuration: 1000,
         });
     };
@@ -215,41 +240,10 @@ export default function MapScreen() {
         return now.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
     };
 
-    // Convert markers to GeoJSON for rendering
-    const getMarkersGeoJSON = () => {
-        return {
-            type: "FeatureCollection",
-            features: markers.map((marker) => ({
-                type: "Feature",
-                id: marker.id,
-                properties: {
-                    id: marker.id, // belangrijk om het later terug te vinden
-                    title: marker.title,
-                    icon: marker.icon || "marker-icon",
-                },
-                geometry: {
-                    type: "Point",
-                    coordinates: marker.coordinate,
-                },
-            })),
-        };
-    };
-
-    // Click handler voor markers
-    const onMarkerPress = (e: any) => {
-        const feature = e.features?.[0];
-        if (!feature) return;
-
-        const markerId =
-            feature.properties?.id ?? feature.id;
-
-        if (!markerId) return;
-
-        const marker = markers.find((m) => m.id === markerId);
-        if (!marker) return;
-
-        setSelectedMarker(marker);
-    };
+    // Fetch artworks on mount
+    useEffect(() => {
+        fetchArtworks();
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -313,24 +307,28 @@ export default function MapScreen() {
     }, [isRouteActive, selectedMarker]);
 
     const goToMyLocation = async () => {
-        const loc = await Location.getCurrentPositionAsync({});
-        const coord: [number, number] = [
-            loc.coords.longitude,
-            loc.coords.latitude,
-        ];
+        try {
+            const loc = await Location.getCurrentPositionAsync({});
+            const coord: [number, number] = [
+                loc.coords.longitude,
+                loc.coords.latitude,
+            ];
 
-        setUserCoord(coord);
+            setUserCoord(coord);
 
-        cameraRef.current?.setCamera({
-            centerCoordinate: coord,
-            zoomLevel: 16,
-            pitch: 60,
-            animationDuration: 800,
-        });
+            cameraRef.current?.setCamera({
+                centerCoordinate: coord,
+                zoomLevel: 16,
+                pitch: 60,
+                animationDuration: 800,
+            });
 
-        // Route opnieuw berekenen als er een marker geselecteerd is
-        if (selectedMarker && isRouteActive) {
-            await fetchWalkingRoute(coord, selectedMarker.coordinate);
+            // Route opnieuw berekenen als er een marker geselecteerd is
+            if (selectedMarker && isRouteActive) {
+                await fetchWalkingRoute(coord, selectedMarker.coordinate);
+            }
+        } catch (error) {
+            console.error('Error getting location:', error);
         }
     };
 
@@ -342,7 +340,7 @@ export default function MapScreen() {
         );
     }
 
-    if (hasPermission === null) {
+    if (hasPermission === null || loading) {
         return (
             <View style={styles.center}>
                 <ActivityIndicator />
@@ -358,36 +356,46 @@ export default function MapScreen() {
                 mapStyle={styleUrl}
                 compassEnabled={false}
             >
-                <Images
-                    images={{
-                        "marker-icon1": require("@/assets/icons/oorlogsmonument_bissegem.png"),
-                        "marker-icon2": require("@/assets/icons/leie_monument.png"),
-                        "marker-icon3": require("@/assets/icons/groeninge_monument.png"),
-                        "marker-icon4": require("@/assets/icons/monument_voor_de_gesneuvelden_van_wereldoorlog_ii.png"),
-                    }}
-                />
-
                 {/* native user dot */}
                 <UserLocation visible={true} />
 
-                {/* Custom Markers */}
-                {markers.length > 0 && (
-                    <ShapeSource
-                        id="markers-source"
-                        shape={getMarkersGeoJSON() as any}
-                        onPress={onMarkerPress}
+                {/* Custom Markers with hidden images */}
+                {markers.map((marker) => (
+                    <MarkerView
+                        key={marker.id}
+                        coordinate={marker.coordinate}
                     >
-                        <SymbolLayer
-                            id="markers-layer"
+                        <TouchableOpacity
+                            onPress={() => setSelectedMarker(marker)}
                             style={{
-                                iconImage: ["get", "icon"],
-                                iconSize: 0.05,
-                                iconAllowOverlap: true,
-                                iconIgnorePlacement: true,
+                                width: 60,
+                                height: 60,
+                                backgroundColor: '#FF5AE5',
+                                borderRadius: 30,
+                                borderWidth: 3,
+                                borderColor: '#FFFFFF',
+                                overflow: 'hidden',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 4,
+                                elevation: 5,
                             }}
-                        />
-                    </ShapeSource>
-                )}
+                        >
+                            {marker.iconUrl ? (
+                                <Image
+                                    source={{ uri: marker.iconUrl }}
+                                    style={{ width: '100%', height: '100%' }}
+                                    resizeMode="contain"
+                                />
+                            ) : (
+                                <View style={{ width: 30, height: 30, backgroundColor: '#FFF', borderRadius: 15 }} />
+                            )}
+                        </TouchableOpacity>
+                    </MarkerView>
+                ))}
 
                 {/* wandelroute user → selected marker (volgt straten) */}
                 {routeGeoJSON && (
@@ -409,10 +417,12 @@ export default function MapScreen() {
 
                 <Camera
                     ref={cameraRef}
-                    centerCoordinate={userCoord ?? center}
-                    zoomLevel={userCoord ? 17 : 12}
-                    pitch={60}
-                    heading={20}
+                    defaultSettings={{
+                        centerCoordinate: userCoord ?? center,
+                        zoomLevel: userCoord ? 17 : 12,
+                        pitch: 60,
+                        heading: 20,
+                    }}
                 />
             </MapView>
 
@@ -454,11 +464,15 @@ export default function MapScreen() {
                     >
                         {/* Left side: Image with pink background - full height */}
                         <View style={styles.popupImageContainer}>
-                            <Image
-                                source={markerImages[selectedMarker.icon || 'marker-icon1']}
-                                style={styles.popupImage}
-                                resizeMode="contain"
-                            />
+                            {selectedMarker.iconUrl ? (
+                                <Image
+                                    source={{ uri: selectedMarker.iconUrl }}
+                                    style={styles.popupImage}
+                                    resizeMode="contain"
+                                />
+                            ) : (
+                                <Text style={{ color: '#fff' }}>No Image</Text>
+                            )}
                         </View>
 
                         {/* Right side: Text content + button */}
@@ -468,7 +482,7 @@ export default function MapScreen() {
                                     {selectedMarker.title || "Kunstwerk"}
                                 </Text>
                                 <Text style={styles.popupSubtitle}>
-                                    {selectedMarker.description || "Kunstenaar"}
+                                    {selectedMarker.creator || "Onbekend"}
                                 </Text>
                                 <Text style={styles.popupDistance}>
                                     Afstand: {userCoord ? calculateDistance(userCoord, selectedMarker.coordinate) : "--"} km
@@ -509,7 +523,7 @@ export default function MapScreen() {
                                     {selectedMarker.title || "Kunstwerk"}
                                 </Text>
                                 <Text style={styles.routeSubtitle}>
-                                    {selectedMarker.description || "Kunstenaar"}
+                                    {selectedMarker.creator || "Onbekend"}
                                 </Text>
                             </View>
 
@@ -577,29 +591,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
-    },
-    searchContainer: {
-        position: "absolute",
-        top: 60,
-        left: 20,
-        right: 20,
-        flexDirection: "row",
-        height: 45,
-        backgroundColor: "#fff",
-        borderRadius: 30,
-        overflow: "hidden",
-        zIndex: 10,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    input: {
-        flex: 1,
-        paddingLeft: 15,
-        fontSize: 15,
-        color: "#000",
-        fontFamily: "LeagueSpartan",
     },
     locationBtn: {
         position: "absolute",
