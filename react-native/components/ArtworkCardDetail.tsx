@@ -184,9 +184,6 @@ export default function ArtworkCardDetail({ artwork, onClose }: ArtworkCardDetai
           {/* Description */}
           {attributes.Description && (
             <View style={styles.section}>
-              <ThemedText style={[styles.sectionTitle, { fontFamily: 'Impact' }]}>
-                Description
-              </ThemedText>
               <ThemedText style={[styles.description, { fontFamily: 'LeagueSpartan' }]}>
                 {attributes.Description}
               </ThemedText>
@@ -279,8 +276,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     flex: 1,
-    maxWidth: scale(115),
-    marginHorizontal: scale(4),
+    maxWidth: scale(100),
+    marginHorizontal: scale(0),
   },
   buttonIcon: {
     width: moderateScale(100),
@@ -314,6 +311,7 @@ const styles = StyleSheet.create({
   // Sections
   section: {
     marginBottom: verticalScale(30),
+    marginTop: verticalScale(10),
   },
   sectionTitle: {
     fontSize: moderateScale(24),
@@ -322,7 +320,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: moderateScale(15),
-    color: '#ccc',
+    color: '#fff',
     lineHeight: moderateScale(22),
   },
 
