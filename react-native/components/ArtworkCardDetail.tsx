@@ -255,13 +255,15 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     height: verticalScale(400),
+    borderRadius: moderateScale(30),
     backgroundColor: '#FF5AE5',
   },
   heroImage: {
     width: '70%',
     height: '75%',
     marginLeft: '15%',
-    marginTop: '25.7%',
+    position: 'absolute',
+    bottom: 0,
     resizeMode: 'cover',
   },
 
