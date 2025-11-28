@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 
-const STRAPI_URL = 'http://192.168.0.212:1337';
+const STRAPI_URL = 'http://172.30.32.144:1337';
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,17 +25,13 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 import Bell from '../../assets/icons/doorbell.png';
-import Icon1 from '../../assets/icons/route.png';
-import Icon3 from '../../assets/icons/share.png';
-import Icon2 from '../../assets/icons/stickers.png';
-import Oorlog from '../../assets/profile-info/oorlogsmonumenten.png';
-import Religie from '../../assets/profile-info/religie.png';
+import Icon11 from '../../assets/prestaties/11.png';
+import Icon4 from '../../assets/prestaties/4.png';
+import Icon7 from '../../assets/prestaties/7.png';
+import Icon120 from '../../assets/prestaties/120.png';
+import Icon55 from '../../assets/prestaties/55.png';
+import Route from '../../assets/icons/themaRouteIcon.png';
 import Cross from '../../assets/icons/cross.png';
-import Info from '../../assets/icons/info.png';
-import Age from '../../assets/profile-info/Group 100.png';
-import RoutesComplete from '../../assets/profile-info/Group 99.png'
-import FoundedStickers from "../../assets/profile-info/Group 98.png"
-import ProfilePic from '../../assets/profile-info/Group 97.png'
 
 export default function SettingsScreen() {
   const [fontsLoaded] = useFonts({
@@ -45,10 +41,8 @@ export default function SettingsScreen() {
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [stickerTypeDropdownVisible, setStickerTypeDropdownVisible] = useState(false);
-  const [themaRouteDropdownVisible, setThemaRouteDropdownVisible] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("Alle");
   const [selectedStickerType, setSelectedStickerType] = useState("Alle stickers");
-  const [selectedThemaRoute, setSelectedThemaRoute] = useState("Themaroute toevoegen");
   const [artworks, setArtworks] = useState<any[]>([]);
   const [themes, setThemes] = useState<string[]>(['Alle', 'Religie', 'Historie', 'Moderne Kunst', 'ZieMie', 'Oorlog']);
   const [loading, setLoading] = useState(true);
@@ -112,11 +106,6 @@ export default function SettingsScreen() {
     setStickerTypeDropdownVisible(false);
   };
 
-  const handleThemaRouteSelect = (route: string) => {
-    setSelectedThemaRoute(route);
-    setThemaRouteDropdownVisible(false);
-  };
-
   const handleStickerPress = (artwork: any) => {
     setSelectedSticker(artwork);
     setModalVisible(true);
@@ -148,73 +137,74 @@ export default function SettingsScreen() {
         <Image source={Bell} style={styles.bellIcon} />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.infoButton}>
-        <Image source={Info} style={styles.infoIcon} />
-      </TouchableOpacity>
+      <ThemedText type="title" style={[styles.mainTitle, { fontFamily: 'Impact' }]}>
+        ArtQuestia
+      </ThemedText>
 
-      <View style={styles.profileContainer}>
-        <Image source={ProfilePic} style={styles.profilePic} />
-        <ThemedText style={styles.profileName}>Jane Doe</ThemedText>
-      </View>
+      <ThemedText type="title" style={[styles.subtitle, { fontFamily: 'LeagueSpartan' }]}>
+        Beleef, ontdek, verbind
+      </ThemedText>
 
-        <View style={styles.rowInfo}>
-        <TouchableOpacity style={styles.infoContainer}>
-          <Image source={Age} style={styles.infoIcons} />
-          <View style={styles.info}>
-            <ThemedText style={styles.infoText}>Leeftijd</ThemedText>
+      <ThemedText type="title" style={[styles.title, { fontFamily: 'LeagueSpartan' }]}>
+        Prestaties
+      </ThemedText>
+      
+      <ThemedText style={[styles.prestatiesSubtitle, { fontFamily: 'LeagueSpartan' }]}>
+        Veeg om ze allemaal te zien
+      </ThemedText>
+
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.rowButtonsScrollView}
+        contentContainerStyle={styles.rowButtonsContent}
+      >
+        <TouchableOpacity style={styles.buttonContainer}>
+          <Image source={Icon11} style={styles.buttonIcon} />
+          <View style={styles.button}>
+            <ThemedText style={styles.buttonText}>Religie</ThemedText>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.infoContainer}>
-          <Image source={RoutesComplete} style={styles.infoIcons} />
-          <View style={styles.info}>
-            <ThemedText style={styles.infoText}>Complete routes</ThemedText>
+        <TouchableOpacity style={styles.buttonContainer}>
+          <Image source={Icon4} style={styles.buttonIcon} />
+          <View style={styles.button}>
+            <ThemedText style={styles.buttonText}>Abstract</ThemedText>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.infoContainer}>
-          <Image source={FoundedStickers} style={styles.infoIcons} />
-          <View style={styles.info}>
-            <ThemedText style={styles.infoText}>Gevonden stickers</ThemedText>
+        <TouchableOpacity style={styles.buttonContainer}>
+          <Image source={Icon7} style={styles.buttonIcon} />
+          <View style={styles.button}>
+            <ThemedText style={styles.buttonText}>Fun</ThemedText>
           </View>
         </TouchableOpacity>
-      </View>
+
+        <TouchableOpacity style={styles.buttonContainer}>
+          <Image source={Icon120} style={styles.buttonIcon} />
+          <View style={styles.button}>
+            <ThemedText style={styles.buttonText}>Gemeenschap</ThemedText>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonContainer}>
+          <Image source={Icon55} style={styles.buttonIcon} />
+          <View style={styles.button}>
+            <ThemedText style={styles.buttonText}>Oorlog</ThemedText>
+          </View>
+        </TouchableOpacity>
+      </ScrollView>
 
       <View style={styles.themaRoute}>
         <ThemedText type="title" style={[styles.title, { fontFamily: 'LeagueSpartan' }]}>
-          Thema routes
+          Oorlog thema route
+        </ThemedText>
+        <ThemedText type="title" style={[styles.title, { fontFamily: 'LeagueSpartan' }]}>
+          55%
         </ThemedText>
       </View>
-      <View style={styles.themaRouteRow}>
-        <Image source={Oorlog} style={styles.themaRouteIcon} />
-        <Image source={Religie} style={styles.themaRouteIcon} />
-      </View>
+      <Image source={Route} style={styles.themaRouteIcon} />
 
-      <TouchableOpacity 
-        style={styles.themaRouteButton}
-        onPress={() => {
-          setThemaRouteDropdownVisible(!themaRouteDropdownVisible);
-          setDropdownVisible(false);
-          setStickerTypeDropdownVisible(false);
-        }}
-      >
-        <ThemedText style={styles.themaRouteButtonText}>{selectedThemaRoute}</ThemedText>
-        <ThemedText style={styles.dropdownArrow}>▼</ThemedText>
-      </TouchableOpacity>
-
-      {themaRouteDropdownVisible && (
-        <View style={styles.dropdownContainerGreen}>
-          {themes.filter(theme => theme !== 'Alle').map((route, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.dropdownItem}
-              onPress={() => handleThemaRouteSelect(route)}
-            >
-              <ThemedText style={styles.dropdownText}>{route}</ThemedText>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
 
       <ThemedText type="title" style={[styles.title, { fontFamily: 'LeagueSpartan' }]}>
         Stickers
@@ -364,6 +354,14 @@ export default function SettingsScreen() {
                   >
                     <ThemedText style={styles.readMoreButtonText}>Lees meer</ThemedText>
                   </TouchableOpacity>
+                                    <TouchableOpacity 
+                    style={styles.deelButton}
+                    onPress={() => {
+                      setModalVisible(false);
+                    }}
+                  >
+                    <ThemedText style={styles.deelButtonText}>Deel je ervaring!</ThemedText>
+                  </TouchableOpacity>
                 </>
               );
             })()}
@@ -404,39 +402,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-  },
-  infoButton: {
-    position: 'absolute',
-    top: verticalScale(60),
-    left: scale(25),
-    width: moderateScale(45),
-    height: moderateScale(45),
-    borderRadius: moderateScale(30),
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 50,
-  },
-  infoIcon: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-  profileContainer: {
-    alignItems: 'center',
-    marginTop: verticalScale(-10),
-    marginBottom: verticalScale(20),
-  },
-  profilePic: {
-    width: moderateScale(100),
-    height: moderateScale(100),
-    borderRadius: moderateScale(50),
-    resizeMode: 'contain',
-  },
-  profileName: {
-    fontSize: moderateScale(30),
-    color: '#fff',
-    fontFamily: 'Impact',
-    marginTop: verticalScale(20),
   },
 
   mainTitle: {
@@ -535,38 +500,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  themaRouteRow: {
-    flexDirection: 'row',
-    gap: scale(5),
-    width: '100%',
-  },
   themaRouteIcon: {
-    flex: 1,
-    height: verticalScale(110),
-    resizeMode: 'contain',
-    marginTop: verticalScale(20),
-  },
-  themaRouteButton: {
     width: '100%',
-    paddingVertical: verticalScale(10),
-    borderRadius: moderateScale(30),
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FF7700',
-    gap: scale(5),
-    marginTop: verticalScale(20),
-  },
-  themaRouteButtonText: {
-    color: '#fff',
-    fontSize: moderateScale(15),
-    fontFamily: 'Impact',
-  },
-  dropdownContainerGreen: {
-    backgroundColor: '#FF7700',
-    borderRadius: moderateScale(14),
-    marginTop: verticalScale(5),
-    overflow: 'hidden',
+    height: verticalScale(60),
+    resizeMode: 'contain',
+    marginBottom: verticalScale(20),
   },
   buttonContainerStickers: {
     flexDirection: 'row',
@@ -714,47 +652,25 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(12),
     paddingHorizontal: scale(100),
     borderRadius: moderateScale(25),
+    marginBottom: verticalScale(10),
   },
   readMoreButtonText: {
     color: '#fff',
     fontSize: moderateScale(16),
     fontFamily: 'Impact',
   },
-  rowInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: verticalScale(40),
-    paddingHorizontal: scale(5),
-  },
-  infoContainer: {
+  deelButton: {
+    backgroundColor: '#215AFF',
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(80),
+    borderRadius: moderateScale(25),
     alignItems: 'center',
-    position: 'relative',
-    flex: 1,
-    maxWidth: scale(115),
-    marginHorizontal: scale(4),
-  },
-  infoIcons: {
-    width: moderateScale(50),
-    height: moderateScale(50),
-    position: 'absolute',
-    top: verticalScale(-25),
-    zIndex: 10,
-  },
-  info: {
-    width: '100%',
-    paddingVertical: verticalScale(10),
-    borderRadius: moderateScale(14),
     justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: verticalScale(8),
-    backgroundColor: '#292929',
-    paddingTop: verticalScale(20),
-    minHeight: verticalScale(70),
   },
-  infoText: {
+  deelButtonText: {
     color: '#fff',
-    fontSize: moderateScale(15),
-    fontFamily: 'LeagueSpartan',
+    fontSize: moderateScale(16),
+    fontFamily: 'Impact',
     textAlign: 'center',
   },
 });
