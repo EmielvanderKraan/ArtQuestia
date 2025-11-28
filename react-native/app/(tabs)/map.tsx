@@ -497,7 +497,11 @@ export default function MapScreen() {
                                         </Text>
                                     </View>
                                     <View style={styles.searchResultArrow}>
-                                        <IconSymbol name="arrow.right" size={20} color="#000" />
+                                        <Image
+                                            source={require('@/assets/images/arrownavigation.png')}
+                                            style={styles.searchResultArrowImage}
+                                            resizeMode="contain"
+                                        />
                                     </View>
                                 </TouchableOpacity>
                             );
@@ -592,7 +596,11 @@ export default function MapScreen() {
                             <Text style={styles.routeDistanceText}>
                                 {userCoord ? Math.round(calculateDistance(userCoord, selectedMarker.coordinate) * 1000) : 0}m
                             </Text>
-                            <IconSymbol name="arrow.right" size={50} color="#000" />
+                            <Image
+                                source={require('@/assets/images/arrownavigation.png')}
+                                style={styles.routeArrowImage}
+                                resizeMode="contain"
+                            />
                         </View>
 
                         {/* Right side: Content */}
@@ -754,6 +762,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    searchResultArrowImage: {
+        width: 20,
+        height: 20,
+    },
     locationBtn: {
         position: "absolute",
         top: 60,
@@ -910,11 +922,15 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
     },
     routeDistanceText: {
-        fontSize: 32,
+        fontSize: 26,
         fontWeight: "700",
         color: "#000",
-        marginBottom: 4,
+        marginBottom: 20,
         fontFamily: "LeagueSpartan-semi-bold",
+    },
+    routeArrowImage: {
+        width: 90,
+        height: 90,
     },
     routeContentContainer: {
         flex: 1,
