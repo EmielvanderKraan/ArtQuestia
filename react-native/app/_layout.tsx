@@ -1,24 +1,50 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+const CustomTheme = {
+  dark: true,
+  colors: {
+    primary: '#FF7700',
+    background: '#000000',
+    card: '#000000',
+    text: '#FFFFFF',
+    border: '#292929',
+    notification: '#FF7700',
+  },
+  fonts: {
+    regular: {
+      fontFamily: 'LeagueSpartan',
+      fontWeight: '400' as const,
+    },
+    medium: {
+      fontFamily: 'LeagueSpartan',
+      fontWeight: '500' as const,
+    },
+    bold: {
+      fontFamily: 'Impact',
+      fontWeight: '700' as const,
+    },
+    heavy: {
+      fontFamily: 'Impact',
+      fontWeight: '900' as const,
+    },
+  },
+};
 
+export default function RootLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={CustomTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </ThemeProvider>
   );
 }
