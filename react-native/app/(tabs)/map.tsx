@@ -749,10 +749,12 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#000",
         marginBottom: 4,
+        fontFamily: "LeagueSpartan-regular",
     },
     searchResultDistance: {
         fontSize: 14,
-        color: "#666",
+        color: "#000000",
+        fontFamily: "LeagueSpartan-regular",
     },
     searchResultArrow: {
         width: 40,
