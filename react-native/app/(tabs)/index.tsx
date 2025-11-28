@@ -90,6 +90,9 @@ export default function SettingsScreen() {
       const data = await response.json();
       
       console.log('Fetched artworks:', data);
+      if (data.data && data.data[0]) {
+        console.log('First artwork attributes:', data.data[0].attributes);
+      }
       
       if (data.error) {
         console.error('Strapi API Error:', data.error);

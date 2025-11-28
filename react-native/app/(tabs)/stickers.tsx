@@ -300,6 +300,9 @@ export default function SettingsScreen() {
                 ) : (
                   <View style={[styles.stickerIcon, { backgroundColor: '#444' }]} />
                 )}
+                <ThemedText style={styles.stickerName}>
+                  {attributes.Name || 'Untitled'}
+                </ThemedText>
               </TouchableOpacity>
             );
           })
@@ -575,8 +578,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     columnGap: scale(10),
-    rowGap: verticalScale(120),
+    rowGap: verticalScale(60),
     marginTop: verticalScale(70),
+    marginBottom: verticalScale(50),
     width: '100%',
   },
   stickerContainer: {
@@ -587,10 +591,18 @@ const styles = StyleSheet.create({
   },
   stickerIcon: {
     width: moderateScale(93),
-    height: moderateScale(90),
+    height: moderateScale(93),
     position: 'absolute',
     top: verticalScale(-30),
     zIndex: 10,
+  },
+  stickerName: {
+    color: '#fff',
+    fontSize: moderateScale(15),
+    fontFamily: 'LeagueSpartan',
+    textAlign: 'center',
+    marginTop: verticalScale(80),
+    paddingHorizontal: scale(5),
   },
   modalOverlay: {
     flex: 1,

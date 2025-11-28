@@ -25,6 +25,7 @@ interface ArtworkCardProps {
       Name: string;
       Creator: string;
       Distance?: string;
+      Color?: string;
       Photo_Hidden?: {
         data?: {
           attributes?: {
@@ -77,10 +78,18 @@ export default function ArtworkCard({ artwork, onNext, index = 0 }: ArtworkCardP
     : '1.5 km';
     
   console.log('Distance text:', distanceText);
+  console.log('Color from attributes:', attributes.Color);
+
+  // Add # to color code if it doesn't already have it
+  const backgroundColor = attributes.Color 
+    ? (attributes.Color.startsWith('#') ? attributes.Color : `#${attributes.Color}`)
+    : '#FF5AE5';
+  
+  console.log('Final backgroundColor:', backgroundColor);
 
   return (
     <ThemedView style={styles.titleContainer}>
-      <View style={styles.artCard}>
+      <View style={[styles.artCard, { backgroundColor }]}>
 
         <View style={styles.mapWrapper}>
           <Image source={MapIcon} style={styles.mapImage} />
@@ -134,7 +143,6 @@ const styles = StyleSheet.create({
   },
   artCard: {
     width: '100%',
-    backgroundColor: '#FF5AE5',
     borderRadius: 20,
     padding: 15,
     paddingBottom: 20,

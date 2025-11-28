@@ -72,6 +72,9 @@
         "videos",
         "audios"
       ]
+    },
+    "Color": {
+      "type": "string"
     }
   }
 }
