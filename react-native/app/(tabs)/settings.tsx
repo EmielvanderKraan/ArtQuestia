@@ -25,9 +25,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 import Bell from '../../assets/icons/doorbell.png';
-import Icon1 from '../../assets/icons/route.png';
-import Icon3 from '../../assets/icons/share.png';
-import Icon2 from '../../assets/icons/stickers.png';
 import Oorlog from '../../assets/profile-info/oorlogsmonumenten.png';
 import Religie from '../../assets/profile-info/religie.png';
 import Cross from '../../assets/icons/cross.png';
@@ -391,10 +388,10 @@ const styles = StyleSheet.create({
 
   bellButton: {
     position: 'absolute',
-    top: verticalScale(60),
-    right: scale(25),
-    width: moderateScale(45),
-    height: moderateScale(45),
+    top: verticalScale(68),
+    right: scale(20),
+    width: moderateScale(35),
+    height: moderateScale(35),
     borderRadius: moderateScale(30),
     justifyContent: 'center',
     alignItems: 'center',
@@ -407,10 +404,10 @@ const styles = StyleSheet.create({
   },
   infoButton: {
     position: 'absolute',
-    top: verticalScale(60),
-    left: scale(25),
-    width: moderateScale(45),
-    height: moderateScale(45),
+    top: verticalScale(68),
+    left: scale(20),
+    width: moderateScale(35),
+    height: moderateScale(35),
     borderRadius: moderateScale(30),
     justifyContent: 'center',
     alignItems: 'center',
@@ -492,21 +489,17 @@ const styles = StyleSheet.create({
   rowButtonsContent: {
     flexDirection: 'row',
     gap: scale(5),
-    paddingRight: scale(20),
-    paddingLeft: (0),
   },
   rowButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: verticalScale(40),
     marginBottom: verticalScale(20),
-    width: '100%',
-    gap: scale(10),
   },
   buttonContainer: {
     alignItems: 'center',
     position: 'relative',
-    width: scale(88),
+    width: scale(100),
   },
   buttonIcon: {
     width: moderateScale(60),
@@ -516,7 +509,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   button: {
-    width: '100%',
+    width: '80%',
     paddingVertical: verticalScale(10),
     borderRadius: moderateScale(14),
     justifyContent: 'center',
@@ -724,14 +717,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: verticalScale(40),
-    paddingHorizontal: scale(5),
+    paddingHorizontal: scale(0),
   },
   infoContainer: {
     alignItems: 'center',
     position: 'relative',
     flex: 1,
-    maxWidth: scale(115),
-    marginHorizontal: scale(4),
+    maxWidth: scale(100),
+    marginHorizontal: scale(0),
   },
   infoIcons: {
     width: moderateScale(50),

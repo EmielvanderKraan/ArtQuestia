@@ -13,11 +13,8 @@ import {
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-import Location from '../assets/icons/location.png';
 import NextIcon from '../assets/icons/next.png';
-import Icon1 from '../assets/icons/route.png';
-import Icon3 from '../assets/icons/share.png';
-import Icon2 from '../assets/icons/stickers.png';
+import Bell from '../assets/icons/doorbell_black.png';
 
 const STRAPI_URL = 'http://172.30.40.49:1337';
 
@@ -130,19 +127,18 @@ export default function ArtworkCardDetail({ artwork, onClose }: ArtworkCardDetai
       >
         
         {/* Back Button */}
-        <TouchableOpacity 
-          style={[
-            styles.nextButton
-          ]} 
-          onPress={onClose}
-        >
+        <TouchableOpacity style={[styles.nextButton]} onPress={onClose} >
           <Image source={NextIcon} style={styles.nextButtonIcon} />
         </TouchableOpacity>
 
+    <TouchableOpacity style={styles.bellButton}>
+        <Image source={Bell} style={styles.bellIcon} />
+      </TouchableOpacity>
+
         {/* Main Photo */}
-        {fullImageUrl && (
+        {fullPhotoHiddenUrl && (
           <View style={styles.imageContainer}>
-            <Image source={{ uri: fullImageUrl }} style={styles.heroImage} />
+            <Image source={{ uri: fullPhotoHiddenUrl }} style={styles.heroImage} />
           </View>
         )}
 
@@ -157,6 +153,10 @@ export default function ArtworkCardDetail({ artwork, onClose }: ArtworkCardDetai
           <ThemedText style={[styles.creator, { fontFamily: 'LeagueSpartan' }]}>
              {attributes.Creator || 'Unknown'}
           </ThemedText>
+
+          <ThemedText style={[styles.hidden, { fontFamily: 'Impact' }]}>
+            Nog Verborgen
+            </ThemedText>
 
         <View style={styles.rowButtons}>
         <TouchableOpacity style={styles.buttonContainer}>
@@ -220,11 +220,10 @@ const styles = StyleSheet.create({
   nextButton: {
     position: 'absolute',
     top: verticalScale(60),
-    left: scale(20),
-    width: moderateScale(40),
-    height: moderateScale(40),
+    left: scale(5),
+    width: moderateScale(60),
+    height: moderateScale(60),
     borderRadius: moderateScale(20),
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 100,
@@ -234,7 +233,22 @@ const styles = StyleSheet.create({
     width: '60%',
     height: '60%',
     resizeMode: 'contain',
-    tintColor: '#fff',
+  },
+    bellButton: {
+    position: 'absolute',
+    top: verticalScale(68),
+    right: scale(20),
+    width: moderateScale(35),
+    height: moderateScale(35),
+    borderRadius: moderateScale(30),
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 50,
+  },
+  bellIcon: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
 
   // Hero Image
@@ -244,26 +258,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5AE5',
   },
   heroImage: {
-    width: '100%',
-    height: '100%',
+    width: '70%',
+    height: '75%',
+    marginLeft: '15%',
+    marginTop: '25.7%',
     resizeMode: 'cover',
   },
 
   // Content
   contentContainer: {
     paddingHorizontal: scale(20),
-    paddingTop: verticalScale(50),
+    paddingTop: verticalScale(30),
   },
   title: {
-    fontSize: moderateScale(32),
+    fontSize: moderateScale(25),
     color: '#fff',
-    marginBottom: verticalScale(10),
+    marginBottom: verticalScale(5),
     lineHeight: moderateScale(38),
   },
   creator: {
     fontSize: moderateScale(18),
     color: '#fff',
     marginBottom: verticalScale(30),
+  },
+
+  hidden: {
+    fontSize: moderateScale(15),
+    color: '#F10906',
+    marginBottom: verticalScale(30),
+    borderColor: '#F10906',
+    borderWidth: 1,
+    padding: 10,
+    textAlign: 'center',
+    borderRadius: moderateScale(8),
   },
 
   rowButtons: {

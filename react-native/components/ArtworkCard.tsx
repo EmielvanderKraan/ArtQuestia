@@ -25,7 +25,7 @@ interface ArtworkCardProps {
       Name: string;
       Creator: string;
       Distance?: string;
-      Photo?: {
+      Photo_Hidden?: {
         data?: {
           attributes?: {
             url?: string;
@@ -63,8 +63,8 @@ export default function ArtworkCard({ artwork, onNext, index = 0 }: ArtworkCardP
   const attributes = artwork.attributes || artwork;
   
   // Use Photo field with multiple fallback checks like in stickers.tsx
-  const photoData = attributes.Photo?.data;
-  const photoUrl = photoData?.attributes?.url || photoData?.url || attributes.Photo?.url;
+  const photoData = attributes.Photo_Hidden?.data;
+  const photoUrl = photoData?.attributes?.url || photoData?.url || attributes.Photo_Hidden?.url;
   const fullImageUrl = photoUrl ? `${STRAPI_URL}${photoUrl}` : null;
   
   // Use the calculated distance from the artwork object (passed from index.tsx)
@@ -188,25 +188,24 @@ const styles = StyleSheet.create({
     height: 300,
     resizeMode: 'contain',
     marginTop: 40,
-    marginLeft: '20%',
+    marginLeft: '8%',
     marginBottom: -100,
   },
 
   nextButton: {
     position: 'absolute',
-    top: '50%',
-    width: 40,
-    height: 40,
+    top: '47%',
+    width: 60,
+    height: 60,
     borderRadius: 20,
-    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
   },
   nextButtonRight: {
-    right: 16,
+    right: 0,
   },
   nextButtonLeft: {
-    left: 16,
+    left: 0,
     transform: [{ rotate: '180deg' }],
   },
   nextButtonIcon: {

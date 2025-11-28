@@ -389,10 +389,10 @@ const styles = StyleSheet.create({
 
   bellButton: {
     position: 'absolute',
-    top: verticalScale(60),
-    right: scale(25),
-    width: moderateScale(45),
-    height: moderateScale(45),
+    top: verticalScale(68),
+    right: scale(20),
+    width: moderateScale(35),
+    height: moderateScale(35),
     borderRadius: moderateScale(30),
     justifyContent: 'center',
     alignItems: 'center',
